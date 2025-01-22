@@ -1,33 +1,32 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.User;
-import com.example.backend.service.UserService;
+import com.example.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return ResponseEntity.ok(userService.register(user));
+    public String register(@RequestBody User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            return "Username already taken!";
+        }
+        userRepository.save(user);
+        return "Registration successful!";
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody Map<String, String> credentials) {
-        String username = credentials.get("username");
-        String password = credentials.get("password");
-        return ResponseEntity.ok(userService.login(username, password));
+    public String login(@RequestBody User user) {
+        User foundUser = userRepository.findByUsername(user.getUsername());
+        if (foundUser != null && foundUser.getPassword().equals(user.getPassword())) {
+            return "Login successful!";
+        }
+        return "Invalid credentials!";
     }
 }
-

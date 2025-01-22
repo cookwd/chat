@@ -3,28 +3,43 @@ package com.example.backend.service;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    public User register(User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
-        }
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    // 用户注册
+    public User registerUser(String username, String password) {
+        // 加密密码
+        String encryptedPassword = passwordEncoder.encode(password);
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(encryptedPassword);
         return userRepository.save(user);
     }
 
-    public User login(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid credentials");
-        }
-        return user;
-    }
-}
+    // 用户登录
+    public User loginUser(String username, String password) {
+        // 查找用户名是否存在
+        User user = userRepository.findByUsername(username);
 
+        // 如果用户存在，验证密码
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;  // 用户验证通过，返回 User 对象
+        }
+
+        return null;  // 用户不存在或密码不正确
+    }
+
+}
