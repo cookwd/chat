@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8081")  // 允许来自前端 http://localhost:8081 的跨域请求
 @RequestMapping("/api/users")
 public class UserController {
 

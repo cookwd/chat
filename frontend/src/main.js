@@ -1,10 +1,9 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router'; // 导入路由配置
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
 
-const app = createApp(App);
-
-// 使用路由
-app.use(router);
-
-app.mount('#app');
+createApp(App)
+    .use(router)
+    .use(store)
+    .mount('#app')

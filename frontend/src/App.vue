@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view></router-view> <!-- 渲染当前路由对应的组件 -->
+    <router-view></router-view>  <!-- 显示当前匹配的视图组件 -->
   </div>
 </template>
 
@@ -9,7 +9,3 @@ export default {
   name: 'App',
 };
 </script>
-
-<style>
-/* 你的全局样式 */
-</style>

@@ -1,23 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import ChatRoom from '../views/ChatRoom.vue'; // 导入 ChatRoom 组件
+import Home from '../views/Home.vue';
+import Login from '../views/Login.vue';
+import Register from '../views/Register.vue';
+import ChatRoom from '../views/ChatRoom.vue';
 
-// 定义路由规则
 const routes = [
-    {
-        path: '/',
-        redirect: '/chatRoom',  // 默认重定向到 ChatRoom 页面
-    },
-    {
-        path: '/chatRoom',
-        name: 'ChatRoom',
-        component: ChatRoom,  // 引入 ChatRoom 组件
-    },
+    { path: '/home', component: Home },
+    { path: '/login', component: Login },
+    { path: '/register', component: Register },
+    { path: '/chatroom/:id', component: ChatRoom, props: true },
 ];
 
-// 创建路由实例
 const router = createRouter({
-    history: createWebHistory(), // 使用 HTML5 History 模式
-    routes, // 设置路由规则
+    history: createWebHistory(),
+    routes,
+});
+
+// 导航守卫：访问 `/` 时自动重定向到 `/login`
+router.beforeEach((to, from, next) => {
+    // 如果目标路径是 `/`，则重定向到 `/login`
+    if (to.path === '/') {
+        next('/login');
+    } else {
+        next();  // 否则继续导航
+    }
 });
 
 export default router;
