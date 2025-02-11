@@ -21,11 +21,11 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "friends",
+            name = "friend",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
-    private Set<User> friends;
+    private Set<User> friend;
 
     // getters and setters
 }

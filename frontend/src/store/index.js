@@ -2,25 +2,35 @@ import { createStore } from 'vuex';
 
 export default createStore({
     state: {
-        user: null,  // 默认用户为空
+        user: JSON.parse(localStorage.getItem('user')) || null,
+        token: localStorage.getItem('token') || null,
     },
     mutations: {
-        setUser(state, user) {
-            state.user = user;  // 更新用户信息
+        setUser(state, { user, token }) {
+            state.user = user;
+            state.token = token;
+            // 存储用户信息和 token 到 localStorage
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('token', token);
         },
         clearUser(state) {
-            state.user = null;  // 清除用户信息
+            state.user = null;
+            state.token = null;
+            // 清除 localStorage 中的用户信息
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
         }
     },
     actions: {
-        login({ commit }, user) {
-            commit('setUser', user);  // 用户登录，存储信息
+        login({ commit }, { user, token }) {
+            commit('setUser', { user, token });
         },
         logout({ commit }) {
-            commit('clearUser');  // 用户登出，清除信息
+            commit('clearUser');
         }
     },
     getters: {
-        user: (state) => state.user,  // 获取当前用户
+        user: (state) => state.user,
+        token: (state) => state.token,
     }
 });

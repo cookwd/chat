@@ -1,10 +1,6 @@
 <template>
   <div class="login-page">
     <div class="login-container">
-<!--      <div class="login-logo">-->
-<!--        &lt;!&ndash; 请替换为你的 logo 图片路径 &ndash;&gt;-->
-<!--        <img src="/images/qq-logo.png" alt="Logo" />-->
-<!--      </div>-->
       <h2>用户登录</h2>
       <form @submit.prevent="login">
         <div class="input-group">
@@ -23,10 +19,14 @@
               required
           />
         </div>
-        <button type="submit" class="login-button">登录</button>
+        <button
+            type="submit"
+            class="login-button"
+            :disabled="!username || !password">
+          登录
+        </button>
       </form>
       <div class="login-options">
-        <!-- 使用 router-link 进行 SPA 内部路由跳转 -->
         <router-link to="/register">注册</router-link>
         <a href="#" @click.prevent="forgotPassword">忘记密码（还没做）</a>
       </div>
@@ -51,17 +51,29 @@ export default {
           username: this.username,
           password: this.password
         });
-        // 假设后端返回的用户信息在 response.data 中
-        this.$store.dispatch('login', response.data); // 登录后存储用户信息到 Vuex
-        this.$router.push('/home');  // 登录成功后跳转到主页
+        console.log('Login response:', response.data);
+        if (response.data.status === 'success') {
+          // 存储用户信息和 token 到 Vuex 和 localStorage
+          this.$store.dispatch('login', response.data.user);  // 存储用户信息到 Vuex
+          localStorage.setItem('token', response.data.token); // 将 token 存储在 localStorage
+          console.log('User data:', response.data.user);
+          console.log('JWT Token:', response.data.token);
+          this.$router.push('/home');  // 登录成功后跳转到主页
+        } else {
+          alert('Invalid credentials!');
+        }
       } catch (error) {
         console.error('Login failed:', error);
-        alert('Login failed!');
+        if (error.response) {
+          alert(`Error: ${error.response.data.message || 'Login failed'}`);
+        } else {
+          alert('Network error, please try again later.');
+        }
       }
     },
     forgotPassword() {
-      // 此处可实现忘记密码的逻辑
-      alert("Forgot password functionality is not implemented yet.");
+      // 跳转到忘记密码页面或弹出提示
+      this.$router.push('/forgot-password');  // 跳转到忘记密码页面
     }
   }
 };
@@ -74,8 +86,6 @@ export default {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  /* 请替换为你自己的背景图片路径
-  background: url('/images/qq-background.jpg') no-repeat center center;*/
   background-size: cover;
   padding: 20px;
 }
@@ -89,12 +99,6 @@ export default {
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   text-align: center;
-}
-
-/* Logo 样式 */
-.login-logo img {
-  width: 80px;
-  margin-bottom: 20px;
 }
 
 /* 标题样式 */
@@ -115,6 +119,7 @@ h2 {
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
 }
 
 /* 登录按钮样式 */
@@ -131,6 +136,7 @@ h2 {
 
 .login-button:hover {
   background-color: #005bb5;
+  transition: background-color 0.3s ease;
 }
 
 /* 辅助链接样式 */

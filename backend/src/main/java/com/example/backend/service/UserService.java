@@ -42,4 +42,7 @@ public class UserService {
         return null;  // 用户不存在或密码不正确
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
 }

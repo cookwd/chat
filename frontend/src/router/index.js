@@ -3,12 +3,14 @@ import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import ChatRoom from '../views/ChatRoom.vue';
+import FriendsDashboard from "@/views/friend/FriendsDashboard.vue";
 
 const routes = [
     { path: '/home', component: Home },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     { path: '/chatroom/:id', component: ChatRoom, props: true },
+    { path: '/friend', component: FriendsDashboard },
 ];
 
 const router = createRouter({
